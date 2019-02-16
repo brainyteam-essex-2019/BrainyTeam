@@ -1,9 +1,21 @@
 import numpy as np
 import sys
 import os
+import argparse
 import matplotlib.pyplot as plt
 
 from scipy.signal import butter, lfilter, freqz
+
+# ------------- ARGS ------------- #
+parser = argparse.ArgumentParser()
+
+parser.add_argument("wnd_size", type=int, help="size of window for examples (ms)")
+parser.add_argument("--lc", "--low_cutoff", type=int, help="cutoff frequency for lowpass filter")
+parser.add_argument("--hc", "--high_cutoff", type=int, help="cutoff frequency for highpass filter")
+parser.add_argument("--fs", "--sampling_frequency", type=int, help="sampling frequency (ms)")
+parser.add_argument("--display_freqResponse", help="display frequency response of low/high pass filters", action="store_true")
+
+args = parser.parse_args()
 
 # ------------- UTIL ------------- #
 
@@ -17,7 +29,7 @@ def findNextExample(it, flashing):
   return sys.maxsize
   
 # Plots lowpass frequency response
-def plotLowpass(cutoff, fs=240, order=5):
+def plotLowpassFreqResponse(cutoff, fs=240, order=5):
   b, a = butter(order, cutoff, btype='lowpass', analog=False, fs=fs)
   w, h = freqz(b, a, worN=8000)
   
@@ -33,7 +45,7 @@ def plotLowpass(cutoff, fs=240, order=5):
   plt.show()
   
 # Plots lowpass frequency response
-def plotHighpass(cutoff, fs=240, order=5):
+def plotHighpassFreqResponse(cutoff, fs=240, order=5):
   b, a = butter(order, cutoff, btype='highpass', analog=False, fs=fs)
   w, h = freqz(b, a, worN=8000)
   
@@ -100,11 +112,12 @@ def genExamplesFromSignal(signal, stimulus, flashing, fs=240, ms=300, flash_ms =
   
   # First example
   examples = (signal[it:it+wnd_size], )
+  targets  = np.append(targets, stimulus[it])
   it = findNextExample(it + fls_size, flashing)
   
   while (it < stimulus.size):
     examples = examples + (signal[it:it+wnd_size], )
-    targets = np.append(targets, stimulus[it])
+    targets  = np.append(targets, stimulus[it])
     
     it = findNextExample(it + fls_size, flashing)
   
@@ -129,11 +142,26 @@ def saveExamples(data, targets, dirName):
 if __name__ == '__main__':
   runNames = np.array(os.listdir('./data'))
   
-  lowpass_cutoff = 10
-  highpass_cutoff = 1
+  wnd_size = args.wnd_size
+  
+  if args.fs:
+    fs = args.fs
+  else:
+    fs = 240
+  
+  if args.lc:
+    lowpass_cutoff = args.lc
+  else:
+    lowpass_cutoff = 10
     
-  plotLowpass(lowpass_cutoff)
-  plotHighpass(highpass_cutoff)
+  if args.hc:
+    highpass_cutoff = args.hc
+  else:
+    highpass_cutoff = 1
+  
+  if args.display_freqResponse:
+    plotLowpassFreqResponse(lowpass_cutoff)
+    plotHighpassFreqResponse(highpass_cutoff)
   
   for run in runNames:
     dirName    = './data/'         + run + '/'
@@ -141,9 +169,9 @@ if __name__ == '__main__':
   
     signal, stimulus, flashing = readData(dirName)
     
-    signal = lowpassFilter(signal, lowpass_cutoff)
-    signal = highpassFilter(signal, highpass_cutoff)
+    signal = lowpassFilter(signal, lowpass_cutoff, fs=fs)
+    signal = highpassFilter(signal, highpass_cutoff, fs=fs)
     
-    data, targets = genExamplesFromSignal(signal, stimulus, flashing)
+    data, targets = genExamplesFromSignal(signal, stimulus, flashing, fs=fs, ms=wnd_size)
     
     saveExamples(data, targets, resultName)
