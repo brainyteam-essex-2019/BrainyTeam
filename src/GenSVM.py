@@ -28,22 +28,25 @@ class SVMModel:
 
     def get_sets(self):
         # TODO
-        return
+        raise NotImplementedError
 
     def train(self, data=None, target=None):
+        # uses own dataset and labels if none supplied
         if data is None:
             data = self.data
         if target is None:
             target = self.target
 
+        # splits data into training and testing datasets
         train_data, train_target, test_data, test_target = train_test_split(data, target, test_size=TEST_RATIO)
 
+        # parameters used in Grid Search
         Cs = [0.001, 0.01, 0.1, 1, 10]
         gammas = [0.001, 0.01, 0.1, 1]
         kernels = ["linear", "rbf"]
-
         parameters = [{"C": Cs, "gamma": gammas, "kernel": kernels}]
 
+        # trains SVM using Grid Search on training dataset
         clf = GridSearchCV(SVC, parameters, cv=5, n_jobs=-1)
         clf.fit(train_data, train_target)
 
@@ -52,22 +55,26 @@ class SVMModel:
 
         # TODO Graphing results during training
 
+        # predicts data on test dataset
         test_true, test_pred = test_target, clf.predict(test_data)
 
+        # gets evaluation metrics from predictions
         mse = mean_squared_error(test_true, test_pred)
         mae = mean_absolute_error(test_true, test_pred)
         matrix = confusion_matrix(test_true, test_pred)
 
+        # prints out metrics
         print("\nMean Square Error:", mse)
         print("Mean Absolute Error:", mae)
         print("Confusion Matrix:\n", matrix)
 
+        # sets & returns trained SVM model
         self.classifier = clf
         return clf
 
     def get_metrics(self):
         # TODO
-        return
+        NotImplementedError
 
     def disp_confusion_matrix(self):
         print(self.matrix)
