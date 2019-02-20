@@ -188,8 +188,7 @@ if __name__ == '__main__':
     else:
         highpass_cutoff = 1
 
-    if args.display_filter:
-        plot_filter = True
+    plot_filter = args.save_filter_graph
   
     if args.display_freqResponse:
         plotLowpassFreqResponse(lowpass_cutoff)
@@ -206,9 +205,9 @@ if __name__ == '__main__':
         signal_processed = lowpassFilter(signal_processed, lowpass_cutoff, fs=fs)
         signal_processed = highpassFilter(signal_processed, highpass_cutoff, fs=fs)
 
-        if (plot_filter):
-            plotSignals(signal, signal_processed, resultName)
-
-        data, targets = genExamplesFromSignal(signal, stimulus, flashing, fs=fs, ms=wnd_size)
+        data, targets = genExamplesFromSignal(signal_processed, stimulus, flashing, fs=fs, ms=wnd_size)
 
         saveExamples(data, targets, resultName)
+        
+        if (plot_filter):
+            plotSignals(signal, signal_processed, resultName)
