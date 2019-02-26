@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, cohen_kappa_score
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
