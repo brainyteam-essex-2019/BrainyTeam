@@ -20,14 +20,16 @@ args = parser.parse_args()
 
 # ------------- UTIL ------------- #
 
+
 # Finds next flashing window start
 def findNextExample(it, flashing):
-    while (it < flashing.size):
-        if (flashing[it]):
+    while it < flashing.size:
+        if flashing[it]:
             return it
         it += 1
     
     return sys.maxsize
+
 
 def plotSignals(signal, processedSignals, dirName):
     time = np.array(range(signal.shape[0])) / 240
@@ -144,7 +146,7 @@ def genExamplesFromSignal(signal, stimulus, flashing, fs=240, ms=300, flash_ms =
     targets  = np.append(targets, stimulus[it])
     it = findNextExample(it + fls_size, flashing)
 
-    while (it < stimulus.size):
+    while it < stimulus.size:
         examples = examples + (signal[it:it+wnd_size], )
         targets  = np.append(targets, stimulus[it])
 
