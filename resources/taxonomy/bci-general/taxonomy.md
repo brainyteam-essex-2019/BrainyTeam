@@ -6,12 +6,12 @@
 
 > [Visual Protocols and Mental Tasks For Communication Brain Computer
 Interfaces](https://csee.essex.ac.uk/staff/sepulveda/tmpFiles/BCI%20Reviews/Salvaris_v0%20phdthesis.pdf)  _[online doi missing]_
-> [pdf](../pdfs/Salvaris_v0.pdf)
+> [pdf](../../pdfs/Salvaris_v0.pdf)
 >
 > BCIs are systems that allow direct communication between the brain and a computer
 
 > [Brain-computer interfaces for communication and control](https://www.ncbi.nlm.nih.gov/pubmed/12048038)
-> [pdf](../pdfs/2_BCI_review2002.pdf)
+> [pdf](../../pdfs/2_BCI_review2002.pdf)
 >
 > A dependent BCI does not use the brain’s normal output
 pathways to carry the message, but activity in these
@@ -24,7 +24,7 @@ does carry it.
 
 > [Visual Protocols and Mental Tasks For Communication Brain Computer
 Interfaces](https://csee.essex.ac.uk/staff/sepulveda/tmpFiles/BCI%20Reviews/Salvaris_v0%20phdthesis.pdf)  _[online doi missing]_
-> [pdf](../pdfs/Salvaris_v0.pdf)
+> [pdf](../../pdfs/Salvaris_v0.pdf)
 >
 >In military and comercial applications
 the focus has been on assesing emotion, alertness,
