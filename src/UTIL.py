@@ -6,6 +6,7 @@ import numpy as np
 # from specified root folder with
 # structure defined in documentation
 def ReadData(root_dir = './preprocessed/', num_channels=64, ms = 300, fs = 240, transpose_runs=True):
+    print("Reading examples...")
     example_pattern = re.compile("example_[0-9]+[.]csv")
     num_samples = (int)(fs * (ms / 1000))
 
@@ -18,9 +19,10 @@ def ReadData(root_dir = './preprocessed/', num_channels=64, ms = 300, fs = 240, 
         examples = np.zeros((0, num_samples, num_channels))
     targets = np.zeros((0))
 
+    run_count = 1
     for run in data_dirs:
+        print("Reading Run", str(run_count), "out of", str(data_dirs.size))
         data_files = np.array(os.listdir(root_dir + run + '/'))
-        print(data_files.size)
 
         # MNE's CSP method requires data to be shaped num_channels x num_samples.
         if transpose_runs:
@@ -40,5 +42,8 @@ def ReadData(root_dir = './preprocessed/', num_channels=64, ms = 300, fs = 240, 
 
         examples = np.concatenate((examples, run_examples))
         targets = np.concatenate((targets, run_targets))
-
+        
+        run_count += 1
+		
+    print("Finished Reading Data")
     return examples, targets
