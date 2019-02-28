@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import re
 import matplotlib.pyplot as plt
 from sklearn.decomposition import FastICA, PCA
 from sklearn.preprocessing import StandardScaler
@@ -17,7 +18,7 @@ def concatenateData(whole):
 # get custom Data Set from examples
 # if PCA set to true, does PCA transformation
 # returns 3d array
-def getPCAData(experiments, subjects, pca=False, p_componets=10):
+def getAnalysisData(experiments, subjects, pca=False, p_componets=10):
     data = []
     targets = np.array([])
     pca = PCA(n_components=p_componets)
@@ -44,7 +45,7 @@ def getPCAData(experiments, subjects, pca=False, p_componets=10):
 
 # produce a plot of Principal components Analysis
 def analizePCA():
-    data, targets = getPCAData(5, 2)
+    data, targets = getAnalysisData(5, 2)
     concatData = concatenateData(data)
     pca = PCA()
     channels = pca.fit_transform(concatData)
@@ -58,7 +59,7 @@ def analizePCA():
 
 # produce a plot of Independent component Analysis
 def analizeICA():
-    data, targets = getPCAData(1, 1)
+    data, targets = getAnalysisData(1, 1)
     concatData = concatenateData(data)
     ica = FastICA()
     S_ = ica.fit_transform(concatData)
@@ -73,19 +74,64 @@ def analizeICA():
     plt.savefig('pci_plot.png', dpi=300)
     plt.show()
 
+#Return the 3d data array as in UTIL applying PCA or ICA before
+def get_ICA_PCA_Data(root_dir = './preprocessed/', num_channels=64, ms = 300, fs = 240, transpose_runs=True, applyPca = False, applyIca = False, p_components = 10, i_components = 0):
+    if i_components != 0  :
+        ica = FastICA(n_components = i_components)
+    else :
+        ica = FastICA()
 
-# get custom Data Set from examples applying ICA
-# n_components for ICA
-# returns 3d array
-def getICAData(experiments, subjects):
-    data, targets = getPCAData(experiments, subjects)
-    concatData = concatenateData(data)
-    ica = FastICA()
-    S_ = ica.fit_transform(concatData)
-    return S_, targets
+    if applyPca == True :
+        num_channels = p_components
 
+    pca = PCA(n_components=p_components)
+    sc = StandardScaler()
+
+    example_pattern = re.compile("example_[0-9]+[.]csv")
+    num_samples = (int)(fs * (ms / 1000))
+    data_dirs  = np.array(os.listdir(root_dir))
+    data_files = np.array(os.listdir(root_dir))
+
+    print('chas', num_channels)
+    if transpose_runs:
+        examples = np.zeros((0, num_channels, num_samples))
+    else:
+        examples = np.zeros((0, num_samples, num_channels))
+    targets = np.zeros((0))
+
+    for run in data_dirs:
+        data_files = np.array(os.listdir(root_dir + run + '/'))
+        print(data_files.size)
+
+        # MNE's CSP method requires data to be shaped num_channels x num_samples.
+        if transpose_runs:
+            run_examples = np.zeros((data_files.size - 1, num_channels, num_samples))
+        else:
+            run_examples = np.zeros((data_files.size - 1, num_samples, num_channels))
+
+        it = 0
+        for file in data_files:
+            file_data = np.loadtxt(root_dir + run + '/' + file, delimiter=',')
+            if (example_pattern.match(file)):
+                data = file_data
+                #ICA - PCA
+                if applyPca == True :
+                    std_examples = sc.fit_transform(data)
+                    data = pca.fit_transform(std_examples)
+                if applyIca == True :
+                    data = ica.fit_transform(data)
+                if transpose_runs:
+                    run_examples[it] = np.transpose(data)
+                else :
+                    run_examples[it] = data
+                it += 1
+            else:
+                run_targets = file_data
+        examples = np.concatenate((examples, run_examples))
+        targets = np.concatenate((targets, run_targets))
+
+    return examples, targets
 
 if __name__ == '__main__':
-    # data, targets = getPCAData(1,1,True,11)
-    data, targets = getICAData(1, 1)
-    print(data)
+    # data, targets = getAnalysisData(1,1,True,11)
+    data, targets = get_ICA_PCA_Data(applyPca = False,applyIca = True, p_components = 11)
