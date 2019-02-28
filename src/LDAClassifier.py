@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, cohen_kappa_score
+from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, f1_score
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 TEST_RATIO = 0.2
@@ -13,6 +13,7 @@ class LDAModel:
         self.classifier = LDA()
         self.mae = 0
         self.mse = 0
+        self.f1 = 0
         self.matrix = None
 
     def load_data(self, filepath):
@@ -46,10 +47,12 @@ class LDAModel:
         mse = mean_squared_error(test_true, test_pred)
         mae = mean_absolute_error(test_true, test_pred)
         matrix = confusion_matrix(test_true, test_pred)
+        f1 = f1_score(test_true, test_pred)
 
         # prints out metrics
         print("\nMean Square Error:", mse)
         print("Mean Absolute Error:", mae)
+        print("F1 Score:", f1)
         print("Confusion Matrix:\n", matrix)
 
         # returns trained LDA model
@@ -58,3 +61,6 @@ class LDAModel:
 
     def disp_confusion_matrix(self):
         print(self.matrix)
+
+    def get_results(self):
+        return "MSE: {}, MAE: {}, F1 Score: {} Confussion Matrix: \n{}".format(self.mse, self.mae, self.f1, self.matrix)
