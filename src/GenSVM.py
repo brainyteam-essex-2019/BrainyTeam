@@ -16,14 +16,14 @@ class SVMModel:
         self.mse = 0
         self.matrix = None
 
-    def load_data(self, filepath):
-        self.data = pd.read_csv(filepath)
-        self.data.head()
+    def load_data(self, data):
+        self.data = data
+        #self.data.head()
         return self.data
 
-    def load_target(self, filepath):
-        self.target = pd.read_csv(filepath)
-        self.target.head()
+    def load_target(self, target):
+        self.target = target
+        #self.target.head()
         return self.target
 
     def get_sets(self):
