@@ -38,7 +38,12 @@ class SVMModel:
             target = self.target
 
         # splits data into training and testing datasets
-        train_data, train_target, test_data, test_target = train_test_split(data, target, test_size=TEST_RATIO)
+        train_data, test_data, train_target, test_target = train_test_split(data, target, test_size=TEST_RATIO)
+
+        print("train_data ahape:", train_data.shape)
+        print("train_target shape:", test_data.shape)
+        print("test_data ahape:", train_target.shape)
+        print("test_target shape:", test_target.shape)
 
         # parameters used in Grid Search
         Cs = [0.001, 0.01, 0.1, 1, 10]
@@ -47,7 +52,7 @@ class SVMModel:
         parameters = [{"C": Cs, "gamma": gammas, "kernel": kernels}]
 
         # trains SVM using Grid Search on training dataset
-        clf = GridSearchCV(SVC, parameters, cv=5, n_jobs=-1)
+        clf = GridSearchCV(SVC(), parameters, cv=5, n_jobs=-1)
         clf.fit(train_data, train_target)
 
         print("Best parameters set found on development set:\n")

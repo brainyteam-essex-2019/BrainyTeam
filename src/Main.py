@@ -50,6 +50,8 @@ lda = LDAModel()
 
 def train_models():
     data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=False)
+    print("Features ahape:", data_features.shape)
+    print("Features targets:", data_targets.shape)
     svm_none = train_model(svm, data_features, data_targets, SVM_NONE_FILE)
     print(svm_none.get_results())
 

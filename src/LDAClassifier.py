@@ -34,7 +34,7 @@ class LDAModel:
             target = self.target
 
         # splits data into training and testing datasets
-        train_data, train_target, test_data, test_target = train_test_split(data, target, test_size=TEST_RATIO)
+        train_data, test_data, train_target, test_target = train_test_split(data, target, test_size=TEST_RATIO)
 
         # train LDA model
         clf = LDA()
