@@ -39,7 +39,7 @@ LDA_ICA_PCA_CSP_FILE = LDA_PICKLE_FILE + "_ICA_PCA_CSP.pkl"
 
 # variables set by user
 # pre_processing = True
-retrain_models = True
+retrain_models = False
 use_ica = True
 use_pca = False
 use_csp = True
@@ -64,52 +64,44 @@ def train_models():
     print("Features targets:", data_targets.shape)
     data_features_none = flatten_data(data_features_none)
     svm_none = train_model(svm, data_features_none, data_targets, SVM_NONE_FILE)
-    print(svm_none.get_results())
 
     data_features_ica, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=False)
     print("Features shape:", data_features_ica.shape)
     print("Features targets:", data_targets.shape)
     data_features_ica = flatten_data(data_features_ica)
     svm_ica = train_model(svm, data_features_ica, data_targets, SVM_ICA_FILE)
-    print(svm_ica.get_results())
 
     data_features_pca, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=True)
     print("Features shape:", data_features_pca.shape)
     print("Features targets:", data_targets.shape)
     data_features_pca = flatten_data(data_features_pca)
     svm_pca = train_model(svm, data_features_pca, data_targets, SVM_PCA_FILE)
-    print(svm_pca.get_results())
 
     data_features_ica_pca, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=True)
     print("Features shape:", data_features_ica_pca.shape)
     print("Features targets:", data_targets.shape)
     data_features_ica_pca = flatten_data(data_features_ica_pca)
     svm_ica_pca = train_model(svm, data_features_ica_pca, data_targets, SVM_ICA_PCA_FILE)
-    print(svm_ica_pca.get_results())
 
     #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=False)
     print("Features shape:", data_features_none.shape)
     print("Features targets:", data_targets.shape)
     lda_none = train_model(lda, data_features_none, data_targets, LDA_NONE_FILE)
-    print(lda_none.get_results())
 
     #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=False)
     print("Features shape:", data_features_ica.shape)
     print("Features targets:", data_targets.shape)
     lda_ica = train_model(lda, data_features_ica, data_targets, LDA_ICA_FILE)
-    print(lda_ica.get_results())
 
     #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=True)
     print("Features shape:", data_features_pca.shape)
     print("Features targets:", data_targets.shape)
     lda_pca = train_model(lda, data_features_pca, data_targets, LDA_PCA_FILE)
-    print(lda_pca.get_results())
 
     #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=True)
     print("Features shape:", data_features_ica_pca.shape)
     print("Features targets:", data_targets.shape)
     lda_ica_pca = train_model(lda, data_features_ica_pca, data_targets, LDA_ICA_PCA_FILE)
-    print(lda_ica_pca.get_results())
 
 
 def train_model(model, features, targets, filepath):
@@ -125,29 +117,40 @@ def train_model(model, features, targets, filepath):
 
 
 def read_models():
-    # svm_none = ModelSaver.read_model(SVM_NONE_FILE)
-    # print(svm_none.get_results())
+    svm_none = ModelSaver.read_model(SVM_NONE_FILE)
+    print("SVM None")
+    print(svm_none.get_metrics())
 
     svm_ica = ModelSaver.read_model(SVM_ICA_FILE)
-    print(svm_ica.get_results())
+    print("SVM ICA")
+    print(svm_ica.get_metrics())
 
     svm_pca = ModelSaver.read_model(SVM_PCA_FILE)
-    print(svm_pca.get_results())
+    print("SVM PCA")
+    print(svm_pca.get_metrics())
 
-    svm_ica_pca = ModelSaver.read_model(SVM_CSP_FILE)
-    print(svm_ica_pca.get_results())
+    svm_ica_pca = ModelSaver.read_model(SVM_ICA_PCA_FILE)
+    print("SVM ICA PCA")
+    print(svm_ica_pca.get_metrics())
 
-    # lda_none = ModelSaver.read_model(LDA_NONE_FILE)
-    # print(lda_none.get_results())
+    lda_none = ModelSaver.read_model(LDA_NONE_FILE)
+    print("LDA None")
+    print(lda_none.get_metrics())
 
     lda_ica = ModelSaver.read_model(LDA_ICA_FILE)
-    print(lda_ica.get_results())
+    print("LDA ICA ")
+    print(lda_ica.get_metrics())
 
     lda_pca = ModelSaver.read_model(LDA_PCA_FILE)
-    print(lda_pca.get_results())
+    print("LDA PCA")
+    print(lda_pca.get_metrics())
 
     lda_ica_pca = ModelSaver.read_model(LDA_ICA_PCA_FILE)
-    print(lda_ica_pca.get_results())
+    print("LDA ICA PCA")
+    print(lda_ica_pca.get_metrics())
+
+
+
 
 
 if retrain_models:

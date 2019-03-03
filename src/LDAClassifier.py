@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, f1_score
+from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, f1_score, accuracy_score, balanced_accuracy_score
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 TEST_RATIO = 0.2
@@ -11,6 +11,8 @@ class LDAModel:
         self.data = pd.DataFrame()
         self.target = pd.DataFrame()
         self.classifier = LDA()
+        self.accuracy = 0
+        self.balanced = 0
         self.mae = 0
         self.mse = 0
         self.f1 = 0
@@ -25,6 +27,14 @@ class LDAModel:
         self.target = target
         #self.target.head()
         return self.target
+
+    def get_metrics(self):
+        print("Accuracy:", self.accuracy)
+        print("Balanced accuracy:", self.balanced)
+        print("Mean Square Error:", self.mse)
+        print("Mean Absolute Error:", self.mae)
+        print("F1 Score:", self.f1)
+        print("Confusion Matrix:\n", self.matrix)
 
     def train(self, data=None, target=None):
         # uses own dataset and labels if none supplied
@@ -44,16 +54,15 @@ class LDAModel:
         test_true, test_pred = test_target, clf.predict(test_data)
 
         # gets evaluation metrics from predictions
-        mse = mean_squared_error(test_true, test_pred)
-        mae = mean_absolute_error(test_true, test_pred)
-        matrix = confusion_matrix(test_true, test_pred)
-        f1 = f1_score(test_true, test_pred)
+        self.accuracy = accuracy_score(test_true, test_pred)
+        self.balanced = balanced_accuracy_score(test_true, test_pred)
+        self.mse = mean_squared_error(test_true, test_pred)
+        self.mae = mean_absolute_error(test_true, test_pred)
+        self.matrix = confusion_matrix(test_true, test_pred)
+        self.f1 = f1_score(test_true, test_pred)
 
         # prints out metrics
-        print("\nMean Square Error:", mse)
-        print("Mean Absolute Error:", mae)
-        print("F1 Score:", f1)
-        print("Confusion Matrix:\n", matrix)
+        self.get_metrics()
 
         # returns trained LDA model
         self.classifier = clf
@@ -62,5 +71,3 @@ class LDAModel:
     def disp_confusion_matrix(self):
         print(self.matrix)
 
-    def get_results(self):
-        return "MSE: {}, MAE: {}, F1 Score: {} Confussion Matrix: \n{}".format(self.mse, self.mae, self.f1, self.matrix)
