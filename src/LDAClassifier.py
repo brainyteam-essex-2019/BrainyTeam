@@ -1,7 +1,8 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, f1_score, accuracy_score, balanced_accuracy_score
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, f1_score, accuracy_score, \
+    balanced_accuracy_score
+from sklearn.model_selection import train_test_split
 
 TEST_RATIO = 0.2
 
@@ -20,12 +21,10 @@ class LDAModel:
 
     def load_data(self, data):
         self.data = data
-        #self.data.head()
         return self.data
 
     def load_target(self, target):
         self.target = target
-        #self.target.head()
         return self.target
 
     def get_metrics(self):
@@ -34,7 +33,7 @@ class LDAModel:
         print("Mean Square Error:", self.mse)
         print("Mean Absolute Error:", self.mae)
         print("F1 Score:", self.f1)
-        print("Confusion Matrix:\n", self.matrix)
+        print("Confusion Matrix:\n", self.matrix, "\n")
 
     def train(self, data=None, target=None):
         # uses own dataset and labels if none supplied
@@ -58,7 +57,7 @@ class LDAModel:
         self.balanced = balanced_accuracy_score(test_true, test_pred)
         self.mse = mean_squared_error(test_true, test_pred)
         self.mae = mean_absolute_error(test_true, test_pred)
-        self.matrix = confusion_matrix(test_true, test_pred)
+        self.matrix = confusion_matrix(test_true, test_pred, labels=[1.0, 0.0])
         self.f1 = f1_score(test_true, test_pred)
 
         # prints out metrics
@@ -70,4 +69,3 @@ class LDAModel:
 
     def disp_confusion_matrix(self):
         print(self.matrix)
-

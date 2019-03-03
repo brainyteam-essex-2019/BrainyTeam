@@ -6,6 +6,7 @@ import featureExtraction
 import numpy as np
 from GenSVM import SVMModel
 from LDAClassifier import LDAModel
+from UTIL import ReadData
 
 # import CommonSpatialPattern
 
@@ -40,10 +41,9 @@ LDA_ICA_PCA_CSP_FILE = LDA_PICKLE_FILE + "_ICA_PCA_CSP.pkl"
 # variables set by user
 # pre_processing = True
 retrain_models = False
-use_ica = True
-use_pca = False
-use_csp = True
 window_size = 300
+ica_components = 30
+pca_components = 10
 
 # models
 svm = SVMModel()
@@ -59,49 +59,61 @@ def flatten_data(matrix_3d):
 
 
 def train_models():
-    data_features_none, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=False)
+    data, targets = ReadData()
+    data_pca, targets_pca = featureExtraction.applyPCA(pca_components, data, targets)
+    data_ica, targets_ica = featureExtraction.applyICA(ica_components, data, targets)
+    data_features_csp, targets_csp = featureExtraction.analyzeCSP(data, targets)
+    print("ICA Components ", ica_components)
+    print("PCA Components ", pca_components)
+
+
+    print("Features shape:", data.shape)
+    print("Features targets:", data.shape)
+    data_features_none = flatten_data(data)
+    svm_none = train_model(svm, data_features_none, targets, SVM_NONE_FILE)
+
+    print("Features shape:", data_ica.shape)
+    print("Features targets:", targets.shape)
+    data_features_ica = flatten_data(data_ica)
+    svm_ica = train_model(svm, data_features_ica, targets, SVM_ICA_FILE)
+
+    print("Features shape:", data_pca.shape)
+    print("Features targets:", targets.shape)
+    data_features_pca = flatten_data(data_pca)
+    svm_pca = train_model(svm, data_features_pca, targets, SVM_PCA_FILE)
+
+    print("Features shape:", data_features_csp.shape)
+    print("Features targets:", targets.shape)
+    svm_csp = train_model(svm, data_features_csp, targets, SVM_CSP_FILE)
+
+    """
+    print("Features shape:", data_ica_pca.shape)
+    print("Features targets:", targets.shape)
+    data_features_ica_pca = flatten_data(data_ica_pca)
+    svm_ica_pca = train_model(svm, data_features_ica_pca, targets, SVM_ICA_PCA_FILE)
+    """
+
     print("Features shape:", data_features_none.shape)
-    print("Features targets:", data_targets.shape)
-    data_features_none = flatten_data(data_features_none)
-    svm_none = train_model(svm, data_features_none, data_targets, SVM_NONE_FILE)
+    print("Features targets:", targets.shape)
+    lda_none = train_model(lda, data_features_none, targets, LDA_NONE_FILE)
 
-    data_features_ica, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=False)
     print("Features shape:", data_features_ica.shape)
-    print("Features targets:", data_targets.shape)
-    data_features_ica = flatten_data(data_features_ica)
-    svm_ica = train_model(svm, data_features_ica, data_targets, SVM_ICA_FILE)
+    print("Features targets:", targets.shape)
+    lda_ica = train_model(lda, data_features_ica, targets, LDA_ICA_FILE)
 
-    data_features_pca, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=True)
     print("Features shape:", data_features_pca.shape)
-    print("Features targets:", data_targets.shape)
-    data_features_pca = flatten_data(data_features_pca)
-    svm_pca = train_model(svm, data_features_pca, data_targets, SVM_PCA_FILE)
+    print("Features targets:", targets.shape)
+    lda_pca = train_model(lda, data_features_pca, targets, LDA_PCA_FILE)
 
-    data_features_ica_pca, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=True)
+    print("Features shape:", data_features_csp.shape)
+    print("Features targets:", targets.shape)
+    lda_csp = train_model(lda, data_features_csp, targets, LDA_CSP_FILE)
+
+    """
     print("Features shape:", data_features_ica_pca.shape)
-    print("Features targets:", data_targets.shape)
-    data_features_ica_pca = flatten_data(data_features_ica_pca)
-    svm_ica_pca = train_model(svm, data_features_ica_pca, data_targets, SVM_ICA_PCA_FILE)
-
-    #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=False)
-    print("Features shape:", data_features_none.shape)
-    print("Features targets:", data_targets.shape)
-    lda_none = train_model(lda, data_features_none, data_targets, LDA_NONE_FILE)
-
-    #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=False)
-    print("Features shape:", data_features_ica.shape)
-    print("Features targets:", data_targets.shape)
-    lda_ica = train_model(lda, data_features_ica, data_targets, LDA_ICA_FILE)
-
-    #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=False, applyPca=True)
-    print("Features shape:", data_features_pca.shape)
-    print("Features targets:", data_targets.shape)
-    lda_pca = train_model(lda, data_features_pca, data_targets, LDA_PCA_FILE)
-
-    #data_features, data_targets = featureExtraction.get_ICA_PCA_Data(applyIca=True, applyPca=True)
-    print("Features shape:", data_features_ica_pca.shape)
-    print("Features targets:", data_targets.shape)
-    lda_ica_pca = train_model(lda, data_features_ica_pca, data_targets, LDA_ICA_PCA_FILE)
+    print("Features targets:", targets.shape)
+    lda_ica_pca = train_model(lda, data_features_ica_pca, targets, LDA_ICA_PCA_FILE)
+    """
 
 
 def train_model(model, features, targets, filepath):
@@ -129,9 +141,15 @@ def read_models():
     print("SVM PCA")
     print(svm_pca.get_metrics())
 
+    svm_csp = ModelSaver.read_model(SVM_CSP_FILE)
+    print("SVM CSP")
+    print(svm_csp.get_metrics())
+
+    """
     svm_ica_pca = ModelSaver.read_model(SVM_ICA_PCA_FILE)
     print("SVM ICA PCA")
     print(svm_ica_pca.get_metrics())
+    """
 
     lda_none = ModelSaver.read_model(LDA_NONE_FILE)
     print("LDA None")
@@ -145,12 +163,15 @@ def read_models():
     print("LDA PCA")
     print(lda_pca.get_metrics())
 
+    lda_csp = ModelSaver.read_model(LDA_CSP_FILE)
+    print("LDA CSP")
+    print(lda_csp.get_metrics())
+
+    """
     lda_ica_pca = ModelSaver.read_model(LDA_ICA_PCA_FILE)
     print("LDA ICA PCA")
     print(lda_ica_pca.get_metrics())
-
-
-
+    """
 
 
 if retrain_models:

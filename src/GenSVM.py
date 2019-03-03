@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import confusion_matrix, mean_absolute_error, mean_squared_error, f1_score, accuracy_score, balanced_accuracy_score
 from sklearn.svm import SVC
+from collections import Counter
 
 TEST_RATIO = 0.2
 
@@ -21,12 +22,10 @@ class SVMModel:
 
     def load_data(self, data):
         self.data = data
-        #self.data.head()
         return self.data
 
     def load_target(self, target):
         self.target = target
-        #self.target.head()
         return self.target
 
     def get_sets(self):
@@ -35,12 +34,13 @@ class SVMModel:
 
     def get_metrics(self):
         # TODO
+        print("target {}".format(Counter(self.target)))
         print("Accuracy:", self.accuracy)
         print("Balanced accuracy:", self.balanced)
         print("Mean Square Error:", self.mse)
         print("Mean Absolute Error:", self.mae)
         print("F1 Score:", self.f1)
-        print("Confusion Matrix:\n", self.matrix)
+        print("Confusion Matrix:\n", self.matrix,"\n")
 
     def train(self, data=None, target=None):
         # uses own dataset and labels if none supplied
@@ -52,7 +52,7 @@ class SVMModel:
         # splits data into training and testing datasets
         train_data, test_data, train_target, test_target = train_test_split(data, target, test_size=TEST_RATIO)
 
-        print("train_data ahape:", train_data.shape)
+        print("train_data shape:", train_data.shape)
         print("train_target shape:", test_data.shape)
         print("test_data ahape:", train_target.shape)
         print("test_target shape:", test_target.shape)
@@ -67,10 +67,10 @@ class SVMModel:
         # trains SVM using Grid Search on training dataset
         clf = GridSearchCV(SVC(), parameters, cv=5, n_jobs=-1)
         """
-        clf = SVC()
+        clf = SVC(kernel="rbf", class_weight="balanced")
         clf.fit(train_data, train_target)
 
-        print("Best parameters set found on development set:\n")
+        #print("Best parameters set found on development set:\n")
         #print(clf.best_params_)
 
         # TODO Graphing results during training
@@ -83,7 +83,7 @@ class SVMModel:
         self.balanced = balanced_accuracy_score(test_true, test_pred)
         self.mse = mean_squared_error(test_true, test_pred)
         self.mae = mean_absolute_error(test_true, test_pred)
-        self.matrix = confusion_matrix(test_true, test_pred)
+        self.matrix = confusion_matrix(test_true, test_pred, labels=[1.0, 0.0])
         self.f1 = f1_score(test_true, test_pred)
 
         # prints out metrics
