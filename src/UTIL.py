@@ -42,8 +42,8 @@ def ReadData(root_dir = './preprocessed/', num_channels=64, ms = 300, fs = 240, 
 
         examples = np.concatenate((examples, run_examples))
         targets = np.concatenate((targets, run_targets))
-        
+
         run_count += 1
-		
+
     print("Finished Reading Data")
     return examples, targets
