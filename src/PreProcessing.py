@@ -10,6 +10,7 @@ from scipy.signal import butter, lfilter, freqz
 parser = argparse.ArgumentParser()
 
 parser.add_argument("wnd_size", type=int, help="size of window for examples (ms)")
+parser.add_argument("--wo", "--wnd_offset", type=int, help="offset of window position start (ms)")
 parser.add_argument("--lc", "--low_cutoff", type=int, help="cutoff frequency for lowpass filter")
 parser.add_argument("--hc", "--high_cutoff", type=int, help="cutoff frequency for highpass filter")
 parser.add_argument("--fs", "--sampling_frequency", type=int, help="sampling frequency (ms)")
@@ -133,21 +134,22 @@ def highpassFilter(signal, cutoff, fs=240, order=5, plot=False):
 #     Dim-2 -> Brain sensor which read the signal
 #   1-D targets array in which:
 #     Dim-0 -> Binary value that indicates if a P300 wave was fired.
-def genExamplesFromSignal(signal, stimulus, flashing, fs=240, ms=300, flash_ms = 100):
+def genExamplesFromSignal(signal, stimulus, flashing, fs=240, ms=300, offset_ms=0, flash_ms = 100):
     fls_size = (int)(fs * (flash_ms / 1000))
     wnd_size = (int)(fs * (ms / 1000))
+    offset   = (int)(fs * (offset_ms / 1000))
 
     targets = np.array([]).reshape(0).astype(bool)
 
     it = findNextExample(0, flashing)
 
     # First example
-    examples = (signal[it:it+wnd_size], )
+    examples = (signal[it+offset:it+wnd_size], )
     targets  = np.append(targets, stimulus[it])
     it = findNextExample(it + fls_size, flashing)
 
     while it < stimulus.size:
-        examples = examples + (signal[it:it+wnd_size], )
+        examples = examples + (signal[it+offset:it+wnd_size], )
         targets  = np.append(targets, stimulus[it])
 
         it = findNextExample(it + fls_size, flashing)
@@ -190,6 +192,11 @@ if __name__ == '__main__':
     else:
         highpass_cutoff = 1
 
+    if args.wo:
+        wnd_offset = args.wo
+    else:
+        wnd_offset = 0
+
     plot_filter = args.save_filter_graph
   
     if args.display_freqResponse:
@@ -207,7 +214,7 @@ if __name__ == '__main__':
         signal_processed = lowpassFilter(signal_processed, lowpass_cutoff, fs=fs)
         signal_processed = highpassFilter(signal_processed, highpass_cutoff, fs=fs)
 
-        data, targets = genExamplesFromSignal(signal_processed, stimulus, flashing, fs=fs, ms=wnd_size)
+        data, targets = genExamplesFromSignal(signal_processed, stimulus, flashing, fs=fs, ms=wnd_size, offset_ms=wnd_offset)
 
         saveExamples(data, targets, resultName)
         
