@@ -42,8 +42,9 @@ LDA_ICA_PCA_CSP_FILE = LDA_PICKLE_FILE + "_ICA_PCA_CSP.pkl"
 # pre_processing = True
 retrain_models = False
 window_size = 300
-ica_components = 30
-pca_components = 10
+ica_components = 20
+pca_components = 20
+csp_components =  20# default 4
 
 # models
 svm = SVMModel()
@@ -62,9 +63,10 @@ def train_models():
     data, targets = ReadData()
     data_pca, targets_pca = featureExtraction.applyPCA(pca_components, data, targets)
     data_ica, targets_ica = featureExtraction.applyICA(ica_components, data, targets)
-    data_features_csp, targets_csp = featureExtraction.analyzeCSP(data, targets)
+    data_features_csp, targets_csp = featureExtraction.analyzeCSP(csp_components, data, targets)
     print("ICA Components ", ica_components)
     print("PCA Components ", pca_components)
+    print("CSP Components ", csp_components)
 
 
     print("Features shape:", data.shape)
@@ -129,6 +131,10 @@ def train_model(model, features, targets, filepath):
 
 
 def read_models():
+    print("ICA Components ", ica_components)
+    print("PCA Components ", pca_components)
+    print("CSP Components ", csp_components)
+
     svm_none = ModelSaver.read_model(SVM_NONE_FILE)
     print("SVM None")
     print(svm_none.get_metrics())

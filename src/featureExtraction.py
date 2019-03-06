@@ -12,9 +12,9 @@ from mne.decoding import CSP
 from UTIL import ReadData
 
 
-def analyzeCSP(examples, targets):
+def analyzeCSP(components, examples, targets):
 
-   csp = CSP(n_components=4, reg=None, log=True, norm_trace=False)
+   csp = CSP(n_components=components, reg=None, log=True, norm_trace=False)
 
    csp_examples = csp.fit_transform(examples, targets)
 

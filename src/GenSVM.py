@@ -67,7 +67,7 @@ class SVMModel:
         # trains SVM using Grid Search on training dataset
         clf = GridSearchCV(SVC(), parameters, cv=5, n_jobs=-1)
         """
-        clf = SVC(kernel="rbf", class_weight="balanced")
+        clf = SVC(class_weight="balanced")
         clf.fit(train_data, train_target)
 
         #print("Best parameters set found on development set:\n")
