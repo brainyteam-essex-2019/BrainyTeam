@@ -54,14 +54,14 @@ def plotSignals(signal, processedSignals, dirName):
     
   
 # Plots lowpass frequency response
-def plotLowpassFreqResponse(b, a, fs=240, order=5):
+def plotLowpassFreqResponse(b, a, fs=240, order=5, cutoff=10):
     w, h = freqz(b, a, worN=8000)
 
     plt.subplot(2, 1, 1)
     plt.plot(0.5*fs*w/np.pi, np.abs(h), 'b')
     plt.plot(cutoff, 0.5*np.sqrt(2), 'ko')
     plt.axvline(cutoff, color='k')
-    plt.xlim(0, 0.1*fs)
+    plt.xlim(cutoff - 0.3*fs, cutoff + 0.3*fs)
     plt.title("Lowpass Filter Frequency Response")
     plt.xlabel('Frequency [Hz]')
     plt.grid()
@@ -70,14 +70,14 @@ def plotLowpassFreqResponse(b, a, fs=240, order=5):
     plt.show()
   
 # Plots lowpass frequency response
-def plotHighpassFreqResponse(b, a, fs=240, order=5):
+def plotHighpassFreqResponse(b, a, fs=240, order=5, cutoff=10):
     w, h = freqz(b, a, worN=8000)
 
     plt.subplot(2, 1, 1)
     plt.plot((0.5*fs)*w/np.pi, np.abs(h), 'b')
     plt.plot(cutoff, 0.5*np.sqrt(2), 'ko')
     plt.axvline(cutoff, color='k')
-    plt.xlim(0, 0.1*fs)
+    plt.xlim(cutoff - 0.3*fs, cutoff + 0.3*fs)
     plt.title("Highpass Filter Frequency Response")
     plt.xlabel('Frequency [Hz]')
     plt.grid()
@@ -107,7 +107,7 @@ def lowpassFilter(signal, cutoff, fs=240, order=5, plot=False):
     y = lfilter(b, a, signal, axis=0)
 
     if (plot):
-        plotLowpassFreqResponse(b, a, fs=fs, order=order)
+        plotLowpassFreqResponse(b, a, fs=fs, order=order, cutoff=cutoff)
 
     return y
 
@@ -120,7 +120,7 @@ def highpassFilter(signal, cutoff, fs=240, order=5, plot=False):
     y = lfilter(b, a, signal, axis=0)
 
     if (plot):
-        plotHighpassFreqResponse(b, a, fs=fs, order=order)
+        plotHighpassFreqResponse(b, a, fs=fs, order=order, cutoff=cutoff)
 
     return y
 
@@ -200,8 +200,9 @@ if __name__ == '__main__':
     plot_filter = args.save_filter_graph
   
     if args.display_freqResponse:
-        plotLowpassFreqResponse(lowpass_cutoff)
-        plotHighpassFreqResponse(highpass_cutoff)
+        plotFreqResp = True
+    else:
+    	  plotFreqResp = False
   
     for run in runNames:
         dirName    = './data/'         + run + '/'
@@ -211,8 +212,9 @@ if __name__ == '__main__':
 
         signal_processed = signal.copy()
 
-        signal_processed = lowpassFilter(signal_processed, lowpass_cutoff, fs=fs)
-        signal_processed = highpassFilter(signal_processed, highpass_cutoff, fs=fs)
+        signal_processed = lowpassFilter(signal_processed, lowpass_cutoff, fs=fs, plot=plotFreqResp)
+        signal_processed = highpassFilter(signal_processed, highpass_cutoff, fs=fs, plot=plotFreqResp)
+        plotFreqResp = False
 
         data, targets = genExamplesFromSignal(signal_processed, stimulus, flashing, fs=fs, ms=wnd_size, offset_ms=wnd_offset)
 
