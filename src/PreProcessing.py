@@ -144,7 +144,7 @@ def genExamplesFromSignal(signal, stimulus, flashing, fs=240, ms=300, offset_ms=
     it = findNextExample(0, flashing)
 
     # First example
-    examples = (signal[it+offset:it+wnd_size], )
+    examples = (signal[it+offset:it+offset+wnd_size], )
     targets  = np.append(targets, stimulus[it])
     it = findNextExample(it + fls_size, flashing)
 
@@ -177,6 +177,10 @@ if __name__ == '__main__':
 
     wnd_size = args.wnd_size
 
+    if wnd_size <= 0:
+        print("Argument Error: Window Size (wnd_size) must be positive integer.")
+        exit()
+
     if args.fs:
         fs = args.fs
     else:
@@ -202,7 +206,7 @@ if __name__ == '__main__':
     if args.display_freqResponse:
         plotFreqResp = True
     else:
-    	  plotFreqResp = False
+    	plotFreqResp = False
   
     for run in runNames:
         dirName    = './data/'         + run + '/'
