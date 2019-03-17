@@ -49,7 +49,7 @@ def applyICA(components,examples,targets):
     ica_data = ica.fit_transform(examples)
     ev = mne.EvokedArray(np.mean(ica_data, axis=0),epochs_info, tmin=tmin)
     ev.plot(show=False, window_title="PCA", time_unit='s')
-    plt.savefig('last_pci_plot.png', dpi=300)
+    plt.savefig('last_ica_plot.png', dpi=300)
     return examples,targets
 
 if __name__ == '__main__':
