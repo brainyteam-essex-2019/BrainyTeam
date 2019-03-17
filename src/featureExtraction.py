@@ -38,6 +38,41 @@ def applyPCA(components,examples,targets):
     ev.plot(show=False, window_title="PCA", time_unit='s')
     plt.savefig('last_pca_plot.png', dpi=300)
     return examples,targets
+   
+# produce a plot of Principal component Analysis
+def analizePCA():
+    data, targets = getData(5,2)
+    concatData = data[0]
+    for e in range(1,data.shape[0]):
+        concatData = np.append(concatData,data[e],axis=0)
+    data, targets = getPCAData(5,2)
+    concatData = concatenateData(data)
+    pca = PCA()
+    channels = pca.fit_transform(concatData)
+
+    plt.bar(range(1,65),pca.explained_variance_ratio_,alpha=0.5, align = 'center')
+    plt.step(range(1,65),np.cumsum(pca.explained_variance_ratio_),where = 'mid')
+    plt.ylabel('Explained variance ratio')
+    plt.xlabel('Principal components')
+    plt.savefig('pca_plot.png',dpi=300)
+    plt.show()
+
+# produce a plot of Independent component Analysis
+def analizeICA():
+    data, targets = getPCAData(1,1)
+    concatData = concatenateData(data)
+    ica = FastICA()
+    S_ = ica.fit_transform(concatData)
+    models = [concatData,S_]
+    names = ['channels', 'ica']
+    colors = ['red', 'steelblue', 'orange']
+    for ii, (model, name) in enumerate(zip(models, names), 1):
+        plt.subplot(4, 1, ii)
+        plt.title(name)
+        for sig, color in zip(model.T, colors):
+            plt.plot(sig)
+    plt.savefig('pci_plot.png',dpi=300)
+    plt.show()
 
 # applys pca to the examples
 # gets components numebr as parameter
