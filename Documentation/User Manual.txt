@@ -1,0 +1,58 @@
+# Dataset Preprocessing Instructions
+
+To run the dataset preprocessing module, a set of pre-requirements must be met:
+
+	1.- The dataset is extracted from the source .mat files in csv files for each run
+		in the ./data folder in the same directory as the PreProcessing.py file
+	2.- The modules NumPy and MatPlotLib must be installed. See Installation.txt file
+		for instructions.
+
+Once these are met, open a terminal in the directory containing the PreProcessing.py file.
+
+To extract 300ms signals per training example on the data contained in the ./data dir, run the
+following command:
+
+	python PreProcessing.py 300
+
+This will automatically generate the training examples on the ./preprocessed directory.
+
+For more instructions about the usage of the tool, run the following command:
+
+	python PreProcessing.py -h
+
+This will return the following usage information:
+
+	PreProcessing.py [-h] [--wo WO] [--lc LC] [--hc HC] [--fs FS]
+                        [--save_filter_graph] [--display_freqResponse]
+                        wnd_size
+
+Mandatory parameters:
+wnd_size: Window size of the training examples. This refers to the number of milliseconds of signal data required for training.
+Optional parameters:
+--wo: Window offset refers to the number of milliseconds to be ignored after initial stimulus. Defaults to 0.
+--lc: Lowpass Filter Cutoff Frequency is the frequency in which the lowpass Butterworth filter will be applied. Defaults to 10.
+--hc: Highpass Filter Cutoff Frequency is the frequency in which the highpass Butterworth filter will be applied. Defaults to 1.
+--fs: Sampling Frequency is the sampling frequency in which the dataset used was sampled. Defaults to 240.
+--save_filter_graph: Flag that, if used, saves the waveforms for each processed channel before and after filter application.
+--display_freqResponse: Flag that, if used, displays and saves the frequency response graphs for the highpass and lowpass filters.
+
+
+# Model Evaluation
+
+To run the model evaluation module, a set of pre-requirements must be met:
+
+	1.- The dataset is preprocessed in the corresponding ./preprocessed directory
+	2.- The module NumPy must be installed. See Installation.txt file
+		for instructions.
+	3.- The ModelSaver.py, GenSVM.py, LDAClassifier.py, and UTIL.py files must be
+		in the same directory.
+	4.- In the code, set the variables ica_components, pca_components, and csp_components
+		to the desired values.
+
+Once these are met, open a terminal in the directory containing the Main.py file.
+
+To run the model evaluation code, execute the following command in console:
+
+	python Main.py
+
+This will train the models and return the Accuracy and F1-Score metrics as well as the Confusion Matrix

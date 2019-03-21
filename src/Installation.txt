@@ -1,0 +1,14 @@
+To be able to run all the code seamlessly, the user needs to install the latest version of Python.
+See Python installation instructions here: https://realpython.com/installing-python/ 
+
+After installing the Python environment, the following libraries must be installed.
+We recommend using the Pip installer in the user terminal:
+NumPy: python -m pip install numpy
+SciPy: python -m pip install scipy
+MatPlotLib: python -m pip install matplotlib
+MNE: python -m pip install mne
+Scikit Learn: python -m pip install scikit-learn
+Pandas: python -m pip install pandas
+
+After these instructions are followed, add the source files to your project folder. 
+The programs should work seamlessly if the dependencies were correctly installed.
