@@ -1,3 +1,5 @@
+# Authors : Zavala Jose, Tates Alberto
+#
 import pandas as pd
 import numpy as np
 import os
@@ -11,7 +13,8 @@ from mne import create_info
 from mne.decoding import CSP
 from UTIL import ReadData
 
-
+# Applies CSP to the examples, based on the number of parametrs as input 
+# 
 def analyzeCSP(components, examples, targets):
 
    csp = CSP(n_components=components, reg=None, log=True, norm_trace=False)
@@ -26,8 +29,9 @@ def analyzeCSP(components, examples, targets):
 
    return csp_examples, targets
 
-# applys pca to the examples
+# Applies PCA to the examples
 # gets components numebr as parameter
+#
 def applyPCA(components,examples,targets):
     tmin, tmax = -0.1, 0.3
     channel_names = np.loadtxt('./metadata/channel_names.csv', dtype=str)
@@ -39,7 +43,8 @@ def applyPCA(components,examples,targets):
     plt.savefig('last_pca_plot.png', dpi=300)
     return examples,targets
    
-# produce a plot of Principal component Analysis
+# Produce a plot of Principal Component Analysis, the variance of each channel 
+#
 def analizePCA():
     data, targets = getData(5,2)
     concatData = data[0]
@@ -57,7 +62,8 @@ def analizePCA():
     plt.savefig('pca_plot.png',dpi=300)
     plt.show()
 
-# produce a plot of Independent component Analysis
+# Produce a plot of Independent component Analysis, a comparison between the channels with and without ICA 
+#
 def analizeICA():
     data, targets = getPCAData(1,1)
     concatData = concatenateData(data)
@@ -74,8 +80,9 @@ def analizeICA():
     plt.savefig('pci_plot.png',dpi=300)
     plt.show()
 
-# applys pca to the examples
+# Applys pca to the examples
 # gets components numebr as parameter
+#
 def applyICA(components,examples,targets):
     tmin, tmax = -0.1, 0.3
     channel_names = np.loadtxt('./metadata/channel_names.csv', dtype=str)
